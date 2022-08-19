@@ -51,25 +51,25 @@ const AuthLauncher = ({ onLaunchMode }) => {
           </Text>
 
           <Flex wrap={["wrap", "nowrap"]} direction="row" justify={"space-around"} w={["300px", "500px"]} align="center">
-            <Tooltip label="Live on Elrond Mainnet & Devnet">
+            <Tooltip label="Elrond Mainnet & Devnet">
               <Image src={chainElrond} boxSize="30px" borderRadius="lg" m="5px" />
             </Tooltip>
-            <Tooltip label="Live on Ropsten & Rinkeby Testnets">
+            <Tooltip label="Ropsten & Rinkeby Testnets">
               <Image src={chainEth} boxSize="30px" width="20px" m="5px" />
             </Tooltip>
-            <Tooltip label="Live on Binance Smart Chain Testnet">
+            <Tooltip label="Binance Smart Chain Testnet">
               <Image src={chainBsc} boxSize="30px" m="5px" />
             </Tooltip>
-            <Tooltip label="Live on Avalanche C-Chain Testnet">
+            <Tooltip label="Avalanche C-Chain Testnet">
               <Image src={chainAvln} boxSize="30px" m="5px" />
             </Tooltip>
-            <Tooltip label="Live on Mumbai Testnet">
+            <Tooltip label="Mumbai Testnet">
               <Image src={chainPol} boxSize="30px" borderRadius="lg" m="5px" />
             </Tooltip>
-            <Tooltip label="Live on Parastate (Polkadot) Testnet">
+            <Tooltip label="Parastate (Polkadot) Testnet">
               <Image src={chainParastate} boxSize="30px" width="25px" m="5px" />
             </Tooltip>
-            <Tooltip label="Live on Harmony Testnet">
+            <Tooltip label="Harmony Testnet">
               <Image src={chainHrmy} boxSize="30px" m="5px" />
             </Tooltip>
           </Flex>
