@@ -163,7 +163,13 @@ function App({ appConfig }) {
       const data = await checkBalance(_chainMetaLocal.contracts.itheumToken, elrondAddress, _chainMetaLocal.networkId);
 
       if (typeof data.balance !== 'undefined') {
-        setTokenBal((data.balance / Math.pow(10, 18)));
+        setTokenBal(((data.balance)/10**18)
+                    .toLocaleString(undefined, 
+                      {
+                        useGrouping: true,
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 2
+                      }));
       } else if (data.error) {
         setTokenBal(-2); // -2 is error getting it
 

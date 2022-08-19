@@ -79,7 +79,12 @@ export default function ChaimsHistory({elrondAddress, networkId, onAfterCloseCha
                       {item.status === "success" ? '' : <CloseIcon ml="2" fontSize="xs" color="red" verticalAlign="baseline"></CloseIcon>}
                     </Td>
                     <Td><Text fontSize="sm">{item.claimType}</Text></Td>
-                    <Td textAlign="center"><Text fontSize="sm">{item.amount / Math.pow(10, 18).toFixed(2)}</Text></Td>
+                    <Td textAlign="center"><Text fontSize="sm">{(item.amount / 10**18).toLocaleString(undefined, 
+                      {
+                        useGrouping: true,
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 2
+                      })}</Text></Td>
                   </Tr>)}
                 </Tbody>
                 <Tfoot>

@@ -107,7 +107,12 @@ export default function({ onRfMount }) {
 
         if (!claims.error) {
           claims.forEach((claim) => {
-            claimBalanceValues.push(claim.amount / Math.pow(10, 18));
+            claimBalanceValues.push((claim.amount / 10**18).toLocaleString(undefined, 
+              {
+                useGrouping: true,
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+              }));
             claimBalanceDates.push(claim.date);
           });
         } else if (claims.error) {
