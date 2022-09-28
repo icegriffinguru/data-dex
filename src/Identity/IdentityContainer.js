@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Box, Stack } from '@chakra-ui/layout';
 import {
   Button, Link, Badge, Flex, Image, StackDivider,  
-  HStack, Heading, Center,
+  HStack, Heading, Center, UnorderedList, ListItem,
 } from '@chakra-ui/react';
 import dataStreamIcon from 'img/data-stream-icon.png';
 import { ABIS } from 'EVM/ABIs';
@@ -18,8 +18,6 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
   const { user: _user } = useUser();
   const { user, isWeb3Enabled, Moralis: { web3Library: ethers } } = useMoralis();
   const { web3: web3Provider } = useMoralis();
-  const a = useMoralis();
-  console.log('useMoralis()', a);
   const { error: errCfTestData, isLoading: loadingCfTestData, fetch: doCfTestData, data: dataCfTestData } = useMoralisCloudFunction('loadTestData', {}, { autoFetch: false });
 
   const [faucetWorking, setFaucetWorking] = useState(false);
@@ -40,49 +38,75 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
   const init = async () => {
     web3Signer.current = web3Provider.getSigner();
     identityFactory.current = new ethers.Contract(_chainMeta.contracts.identityFactory, ABIS.ifactory, web3Signer.current);
-    console.log('identityFactory.current', identityFactory.current);
 
-    // let events = await identityFactory.current.queryFilter('IdentityDeployed', 0);
-    // const identityDeployedEvents = events.filter(event => event.args[1] === walletAddress);
-    // let identityAddresses = identityDeployedEvents.length > 0 ? identityDeployedEvents.map(event => event.args[0]) : [];
+    // query-start block number
+    // We can only query last 1000 blocks due to the limit of Mumbai Testnet
+    const fromBlockNumber = (await web3Provider.getBlockNumber()) - 998;
 
-    // console.log('identityAddresses', identityAddresses);
-    // if (identityAddresses.length === 0) {
-    //   events = await identityFactory.current.queryFilter('AdditionalOwnerAction', 0);
+    let events = await identityFactory.current.queryFilter('IdentityDeployed', fromBlockNumber);
+    const identityDeployedEvents = events.filter(event => event.args[1].toLowerCase() === walletAddress.toLowerCase());
+    let identityAddresses = identityDeployedEvents.length > 0 ? identityDeployedEvents.map(event => event.args[0]) : [];
 
-    //   const eventsForWalletAddress = events.filter(event => event.args[2] === walletAddress);
-    //   const addingEvents = eventsForWalletAddress.filter(event => event.args[3] === 'added');
-    //   const removingEvents = eventsForWalletAddress.filter(event => event.args[3] === 'removed');
+    if (identityAddresses.length === 0) {
+      events = await identityFactory.current.queryFilter('AdditionalOwnerAction', fromBlockNumber);
 
-    //   identityAddresses = addingEvents.map(event => event.args[0]);
+      const eventsForWalletAddress = events.filter(event => event.args[2].toLowerCase() === walletAddress.toLowerCase());
+      const addingEvents = eventsForWalletAddress.filter(event => event.args[3] === 'added');
+      const removingEvents = eventsForWalletAddress.filter(event => event.args[3] === 'removed');
 
-    //   removingEvents.map(event => event.args[0]).forEach(ele => {
-    //     const index = identityAddresses.findIndex(eleToFind => eleToFind === ele);
-    //     if (index >= 0) identityAddresses.splice(index, 1);
-    //   });
-    // }
+      identityAddresses = addingEvents.map(event => event.args[0]);
 
-    // console.log('identityAddresses', identityAddresses);
-    // setIdentityAddresses(identityAddresses);
+      removingEvents.map(event => event.args[0]).forEach(ele => {
+        const index = identityAddresses.findIndex(eleToFind => eleToFind === ele);
+        if (index >= 0) identityAddresses.splice(index, 1);
+      });
+    }
+
+    setIdentityAddresses(identityAddresses);
+  };
+
+  const deployIdentity = async () => {
+    if (identityAddresses.length === 0) {
+      try {
+        const deployIdentityTx = await identityFactory.current.connect(web3Signer.current).deployIdentity();
+        await deployIdentityTx.wait();
+        // load deployed identities
+        await init();
+      } catch (e) {
+        alert(e.reason);
+      }
+    }
   };
 
   useEffect(() => {
-    init();
-  },[]);
+    // this will trigger during component load/page load, so let's get the latest claims balances
+    // ... we need to listed to _chainMeta event as well as it may get set after moralis responds
+    if (_chainMeta?.networkId && user && isWeb3Enabled) {
+      init();
+    }
+  }, [user, isWeb3Enabled, _chainMeta]);
 
   return (
     <Stack spacing={5}>      
       <Flex align="top" spacing={10}>
         <ChainSupportedComponent feature="Identity Container">
           <Box maxW="sm" borderWidth="1px" p="10" m="auto" borderRadius="lg" w="90%" maxWidth="initial">
-            <Center flexDirection="column">
-              <Heading size="lg">Step 1: Deploy your Identity Container</Heading>
+            {identityAddresses.length === 0 ? (<>
+                <Heading size="lg">Step 1: Deploy your Identity Container</Heading>
 
-              <Box fontSize="sm" mt="9" align="center" flex="1">Your first step is to deploy what we can an identity container, this is a smart contract that can be used by you to store your web3 “reputation” and to hold your NFMe ID Souldbound token. You have FULL control over this identity container and you can choose to use it to “talk” with blockchain based DApps to expose your reputation or other data your have within the Itheum ecosystem. The DApps can then provide you personalized experiences. Think - gated features or immediate whitelists</Box>
+                <Box fontSize="sm" mt="9" align="left" flex="1">Your first step is to deploy what we can an identity container, this is a smart contract that can be used by you to store your web3 “reputation” and to hold your NFMe ID Souldbound token. You have FULL control over this identity container and you can choose to use it to “talk” with blockchain based DApps to expose your reputation or other data your have within the Itheum ecosystem. The DApps can then provide you personalized experiences. Think - gated features or immediate whitelists</Box>
 
-              <Button mt="12" colorScheme="teal" variant="outline" onClick={() => {}}>Deploy Identity Container</Button>
+                <Button mt="12" colorScheme="teal" variant="outline" onClick={deployIdentity}>Deploy Identity Container</Button>
+              </>) : (<>
+                <Heading size="lg">My Identity Container</Heading>
 
-            </Center>
+                <Box fontSize="sm" mt="9" align="left" flex="1">
+                  <UnorderedList>
+                    {identityAddresses.map((val, index) => (<ListItem key={`my-indentity-address-${index}`}>{val}</ListItem>))}
+                  </UnorderedList>
+                </Box>
+              </>)
+            }
           </Box>
         </ChainSupportedComponent>
       </Flex>
