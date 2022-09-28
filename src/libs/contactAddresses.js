@@ -7,7 +7,8 @@ const contracts = {
       ddexContractAddress: '0xBDdb6B94d9B60Ac1D788676a287e8c474D68D44A',
       dNFTContractAddress: '0xD01A4bCeD9324034db6cb03E50b76F58496F5FB8',
       claimsContractAddress: '0x985A5c96663C9c44d46Ea061f4b7E50118180F8d',
-      identityFantoryContractAddress: '',
+      identityFantoryContractAddress: '0xdd39a9d92b13769708444c6dc35e943853466f23',
+      nfmeContractAddress: '0x4b4c9673aa9bcacbda7b8d08ee363dc138b66b4f',
     },
   },
   ethereum: {
@@ -53,7 +54,8 @@ export const tokenContractAddress_Matic = contracts.matic[contractsMode].itheumT
 export const ddexContractAddress_Matic = contracts.matic[contractsMode].ddexContractAddress;
 export const dNFTContractAddress_Matic = contracts.matic[contractsMode].dNFTContractAddress;
 export const claimsContractAddress_Matic = contracts.matic[contractsMode].claimsContractAddress;
-export const identityFantoryContractAddress_Matic = contracts.matic[contractMode].identityFantoryContractAddress;
+export const identityFantoryContractAddress_Matic = contracts.matic[contractsMode].identityFantoryContractAddress;
+export const nfmeContractAddress_Matic = contracts.matic[contractsMode].nfmeContractAddress;
 
 // Ethereum Contracts
 export const tokenContractAddress_Rop = contracts.ethereum[contractsMode].ropsten.itheumTokenContractAddress;

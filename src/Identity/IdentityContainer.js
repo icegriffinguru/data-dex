@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, Stack } from '@chakra-ui/layout';
 import {
   Button, Link, Badge, Flex, Image, StackDivider,  
@@ -18,6 +18,8 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
   const { user: _user } = useUser();
   const { user, isWeb3Enabled, Moralis: { web3Library: ethers } } = useMoralis();
   const { web3: web3Provider } = useMoralis();
+  const a = useMoralis();
+  console.log('useMoralis()', a);
   const { error: errCfTestData, isLoading: loadingCfTestData, fetch: doCfTestData, data: dataCfTestData } = useMoralisCloudFunction('loadTestData', {}, { autoFetch: false });
 
   const [faucetWorking, setFaucetWorking] = useState(false);
@@ -33,32 +35,36 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
   let identityFactory = useRef();
   const [identityAddresses, setIdentityAddresses] = useState([]);
   const [txConfirmationIdentity, setTxConfirmationIdentity] = useState(0);
+  const walletAddress = user.get('ethAddress');
 
-  async function init() {
+  const init = async () => {
     web3Signer.current = web3Provider.getSigner();
-    identityFactory.current = new ethers.Contract(_chainMeta.contracts.identifyFactory, ABIS.ifactory, web3Signer.current);
+    identityFactory.current = new ethers.Contract(_chainMeta.contracts.identityFactory, ABIS.ifactory, web3Signer.current);
+    console.log('identityFactory.current', identityFactory.current);
 
-    let events = await identityFactory.current.queryFilter('IdentityDeployed', 0);
-    const identityDeployedEvents = events.filter(event => event.args[1] === walletAddress);
-    let identityAddresses = identityDeployedEvents.length > 0 ? identityDeployedEvents.map(event => event.args[0]) : [];
+    // let events = await identityFactory.current.queryFilter('IdentityDeployed', 0);
+    // const identityDeployedEvents = events.filter(event => event.args[1] === walletAddress);
+    // let identityAddresses = identityDeployedEvents.length > 0 ? identityDeployedEvents.map(event => event.args[0]) : [];
 
-    if (identityAddresses.length === 0) {
-      events = await identityFactory.current.queryFilter('AdditionalOwnerAction', 0);
+    // console.log('identityAddresses', identityAddresses);
+    // if (identityAddresses.length === 0) {
+    //   events = await identityFactory.current.queryFilter('AdditionalOwnerAction', 0);
 
-      const eventsForWalletAddress = events.filter(event => event.args[2] === walletAddress);
-      const addingEvents = eventsForWalletAddress.filter(event => event.args[3] === "added");
-      const removingEvents = eventsForWalletAddress.filter(event => event.args[3] === "removed");
+    //   const eventsForWalletAddress = events.filter(event => event.args[2] === walletAddress);
+    //   const addingEvents = eventsForWalletAddress.filter(event => event.args[3] === 'added');
+    //   const removingEvents = eventsForWalletAddress.filter(event => event.args[3] === 'removed');
 
-      identityAddresses = addingEvents.map(event => event.args[0]);
+    //   identityAddresses = addingEvents.map(event => event.args[0]);
 
-      removingEvents.map(event => event.args[0]).forEach(ele => {
-        const index = identityAddresses.findIndex(eleToFind => eleToFind === ele);
-        if (index >= 0) identityAddresses.splice(index, 1);
-      });
-    }
+    //   removingEvents.map(event => event.args[0]).forEach(ele => {
+    //     const index = identityAddresses.findIndex(eleToFind => eleToFind === ele);
+    //     if (index >= 0) identityAddresses.splice(index, 1);
+    //   });
+    // }
 
-    setIdentityAddresses(identityAddresses);
-  }
+    // console.log('identityAddresses', identityAddresses);
+    // setIdentityAddresses(identityAddresses);
+  };
 
   useEffect(() => {
     init();
