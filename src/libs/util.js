@@ -24,6 +24,8 @@ import {
   claimsContractAddress_Matic,
   claimsContractAddress_testnetBSC,
 
+  identityFantoryContractAddress_Matic,
+
   tokenContractAddress_Elrond_Devnet,
   claimsContractAddress_Elrond_Devnet,
   faucetContractAddress_Elrond_Devnet,
@@ -63,6 +65,7 @@ export const contractsForChain = (networkId) => {
       contracts.ddex = ddexContractAddress_Matic;
       contracts.dnft = dNFTContractAddress_Matic;
       contracts.claims = claimsContractAddress_Matic;
+      contracts.identifyFactory = identityFantoryContractAddress_Matic;
       break;
     case 97:
       contracts.itheumToken = tokenContractAddress_testnetBSC;

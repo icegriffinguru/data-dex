@@ -1326,4 +1326,184 @@ export const ABIS = {
       type: "function",
     },
   ],
+
+  ifactory: [
+    {
+      inputs: [
+        {
+          internalType: "contract ERC20",
+          name: "_mydaToken",
+          type: "address",
+        },
+      ],
+      stateMutability: "nonpayable",
+      type: "constructor",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: false,
+          internalType: "string",
+          name: "dataPackId",
+          type: "string",
+        },
+        {
+          indexed: false,
+          internalType: "address",
+          name: "seller",
+          type: "address",
+        },
+      ],
+      name: "AdvertiseEvent",
+      type: "event",
+    },
+    {
+      inputs: [
+        {
+          internalType: "string",
+          name: "dataPackId",
+          type: "string",
+        },
+        {
+          internalType: "string",
+          name: "dataHashStr",
+          type: "string",
+        },
+      ],
+      name: "advertiseForSale",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "string",
+          name: "dataPackId",
+          type: "string",
+        },
+        {
+          internalType: "uint256",
+          name: "feeInMyda",
+          type: "uint256",
+        },
+      ],
+      name: "buyDataPack",
+      outputs: [],
+      stateMutability: "payable",
+      type: "function",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: false,
+          internalType: "string",
+          name: "dataPackId",
+          type: "string",
+        },
+        {
+          indexed: false,
+          internalType: "address",
+          name: "buyer",
+          type: "address",
+        },
+        {
+          indexed: false,
+          internalType: "address",
+          name: "seller",
+          type: "address",
+        },
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "feeInMyda",
+          type: "uint256",
+        },
+      ],
+      name: "PurchaseEvent",
+      type: "event",
+    },
+    {
+      inputs: [
+        {
+          internalType: "string",
+          name: "dataPackId",
+          type: "string",
+        },
+      ],
+      name: "checkAccess",
+      outputs: [
+        {
+          internalType: "bool",
+          name: "",
+          type: "bool",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "string",
+          name: "",
+          type: "string",
+        },
+      ],
+      name: "dataPacks",
+      outputs: [
+        {
+          internalType: "address",
+          name: "seller",
+          type: "address",
+        },
+        {
+          internalType: "bytes32",
+          name: "dataHash",
+          type: "bytes32",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "mydaToken",
+      outputs: [
+        {
+          internalType: "contract ERC20",
+          name: "",
+          type: "address",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "string",
+          name: "dataPackId",
+          type: "string",
+        },
+        {
+          internalType: "string",
+          name: "dataHashStr",
+          type: "string",
+        },
+      ],
+      name: "verifyData",
+      outputs: [
+        {
+          internalType: "bool",
+          name: "",
+          type: "bool",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+  ],
 };

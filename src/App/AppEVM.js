@@ -582,7 +582,7 @@ function App({ appConfig }) {
                   <Route path="/" element={<HomeEVM key={rfKeys.tools} onRfMount={() => handleRfMount('tools')} setMenuItem={setMenuItem} itheumAccount={itheumAccount} onRefreshTokenBalance={handleRefreshTokenBalance} onItheumAccount={setItheumAccount} />}/>
                   <Route path="home" element={<HomeEVM key={rfKeys.tools} onRfMount={() => handleRfMount('tools')} setMenuItem={setMenuItem} itheumAccount={itheumAccount} onRefreshTokenBalance={handleRefreshTokenBalance} onItheumAccount={setItheumAccount} />}/>
                   <Route path="identity" element={<Outlet />}>
-                    <Route path="identitycontainer" element={<IdentityContainer key={rfKeys.identityContainer} onRfMount={() => handleRfMount('identityContainer')} onRefreshTokenBalance={handleRefreshTokenBalance} />} />
+                    <Route path="identitycontainer" element={<IdentityContainer key={rfKeys.identityContainer} onRfMount={() => handleRfMount('identityContainer')} setMenuItem={setMenuItem} onRefreshTokenBalance={handleRefreshTokenBalance} />} />
                   </Route>
                   <Route path="selldata" element={<SellData key={rfKeys.sellData} onRfMount={() => handleRfMount('sellData')} itheumAccount={itheumAccount} />} />
                   <Route path="datapacks" element={<Outlet />}>
