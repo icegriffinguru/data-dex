@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Box, Stack } from '@chakra-ui/layout';
 import {
   Button, Link, Badge, Flex, Image, StackDivider,  
-  HStack, Heading, Center, UnorderedList, ListItem,
+  HStack, Heading, Center, UnorderedList, ListItem, VStack,
 } from '@chakra-ui/react';
 import dataStreamIcon from 'img/data-stream-icon.png';
 import { ABIS } from 'EVM/ABIs';
@@ -66,15 +66,13 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
   };
 
   const deployIdentity = async () => {
-    if (identityAddresses.length === 0) {
-      try {
-        const deployIdentityTx = await identityFactory.current.connect(web3Signer.current).deployIdentity();
-        await deployIdentityTx.wait();
-        // load deployed identities
-        await init();
-      } catch (e) {
-        alert(e.reason);
-      }
+    try {
+      const deployIdentityTx = await identityFactory.current.connect(web3Signer.current).deployIdentity();
+      await deployIdentityTx.wait();
+      // load deployed identities
+      await init();
+    } catch (e) {
+      alert(e.reason);
     }
   };
 
@@ -87,29 +85,37 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
   }, [user, isWeb3Enabled, _chainMeta]);
 
   return (
-    <Stack spacing={5}>      
-      <Flex align="top" spacing={10}>
+    <VStack
+      spacing={5}
+      align='stretch'
+      >
+      {/* <Flex align="top" spacing={10}> */}
         <ChainSupportedComponent feature="Identity Container">
-          <Box maxW="sm" borderWidth="1px" p="10" m="auto" borderRadius="lg" w="90%" maxWidth="initial">
-            {identityAddresses.length === 0 ? (<>
-                <Heading size="lg">Step 1: Deploy your Identity Container</Heading>
+          <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
+              <Heading size="lg">My Identity Contracts</Heading>
 
-                <Box fontSize="sm" mt="9" align="left" flex="1">Your first step is to deploy what we can an identity container, this is a smart contract that can be used by you to store your web3 “reputation” and to hold your NFMe ID Souldbound token. You have FULL control over this identity container and you can choose to use it to “talk” with blockchain based DApps to expose your reputation or other data your have within the Itheum ecosystem. The DApps can then provide you personalized experiences. Think - gated features or immediate whitelists</Box>
-
-                <Button mt="12" colorScheme="teal" variant="outline" onClick={deployIdentity}>Deploy Identity Container</Button>
-              </>) : (<>
-                <Heading size="lg">My Identity Container</Heading>
-
-                <Box fontSize="sm" mt="9" align="left" flex="1">
+              <Box fontSize="sm" mt="9" align="left" flex="1">
+                {identityAddresses.length === 0 ? (<>You do not have any Identity Contract.</>) : (
                   <UnorderedList>
                     {identityAddresses.map((val, index) => (<ListItem key={`my-indentity-address-${index}`}>{val}</ListItem>))}
                   </UnorderedList>
-                </Box>
-              </>)
-            }
+                )}
+              </Box>
+          </Box>
+          
+        </ChainSupportedComponent>
+
+
+        <ChainSupportedComponent>
+          <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
+            <Heading size="lg">Step 1: Deploy your Identity Contract</Heading>
+
+            <Box fontSize="sm" mt="9" align="left" flex="1">Your first step is to deploy what we can an identity, this is a smart contract that can be used by you to store your web3 “reputation” and to hold your NFMe ID Souldbound token. You have FULL control over this identity contract and you can choose to use it to “talk” with blockchain based DApps to expose your reputation or other data your have within the Itheum ecosystem. The DApps can then provide you personalized experiences. Think - gated features or immediate whitelists</Box>
+
+            <Button mt="12" colorScheme="teal" variant="outline" onClick={deployIdentity}>Deploy Identity Contract</Button>
           </Box>
         </ChainSupportedComponent>
-      </Flex>
-    </Stack>
+      {/* </Flex> */}
+    </VStack>
   );
 };
