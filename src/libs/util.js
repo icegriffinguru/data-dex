@@ -254,7 +254,8 @@ export const PATHS = {
   marketplace: [11,[1]],
   datacoalitions: [12,[2]],
   personaldataproof: [13,[0]],
-  trustedcomputation:[14,[4]]
+  trustedcomputation:[14,[4]],
+  identitycontainer: [15,[0]],
 };
 
 export const CHAINS = {

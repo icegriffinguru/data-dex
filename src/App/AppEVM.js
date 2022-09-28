@@ -27,6 +27,7 @@ import DataCoalitions from 'DataCoalition/DataCoalitions';
 import DataCoalitionsViewAll from 'DataCoalition/DataCoalitionsViewAll';
 import TrustedComputation from 'Sections/TrustedComputation';
 import ChainSupportedInput from 'UtilComps/ChainSupportedInput';
+import IdentityContainer from 'Identity/IdentityContainer';
 import { itheumTokenRoundUtil, contractsForChain, noChainSupport, consoleNotice, gtagGo, debugui, clearAppSessions } from 'libs/util';
 import { MENU, CHAINS, SUPPORTED_CHAINS, CHAIN_TOKEN_SYMBOL, PATHS } from 'libs/util';
 import { ABIS } from 'EVM/ABIs';
@@ -68,6 +69,7 @@ function App({ appConfig }) {
     sellData: 0,
     buyData: 0,
     auth: 0,
+    identityContainer: 0,
   });
   const [splashScreenShown, setSplashScreenShown] = useState({});
   const cancelRef = useRef();
@@ -544,6 +546,32 @@ function App({ appConfig }) {
                           </Stack>
                         </AccordionPanel>
                       </AccordionItem>
+
+                      <AccordionItem>
+                        <AccordionButton>
+                          <Button flex="1" colorScheme="teal" variant="outline">
+                            Identity
+                          </Button>
+                          <AccordionIcon />
+                        </AccordionButton>
+                        <AccordionPanel>
+                          <Stack direction="column" spacing={4} align="left" mt="2" w={menuButtonW}>
+                            <ChainSupportedInput feature={MENU.IDENTITY_CONTAINER}>
+                              <Button
+                                colorScheme="teal"
+                                isDisabled={menuItem === MENU.IDENTITY_CONTAINER}
+                                onClick={() => {
+                                  setMenuItem(MENU.IDENTITY_CONTAINER);
+                                  navigate('identity/identitycontainer');
+                                  setShowMobileMenu(false);
+                                }}
+                              >
+                                Identity Container
+                              </Button>
+                            </ChainSupportedInput>
+                          </Stack>
+                        </AccordionPanel>
+                      </AccordionItem>
                     </Accordion>
                   </Flex>
                 </Stack>
@@ -553,6 +581,9 @@ function App({ appConfig }) {
                 <Routes>
                   <Route path="/" element={<HomeEVM key={rfKeys.tools} onRfMount={() => handleRfMount('tools')} setMenuItem={setMenuItem} itheumAccount={itheumAccount} onRefreshTokenBalance={handleRefreshTokenBalance} onItheumAccount={setItheumAccount} />}/>
                   <Route path="home" element={<HomeEVM key={rfKeys.tools} onRfMount={() => handleRfMount('tools')} setMenuItem={setMenuItem} itheumAccount={itheumAccount} onRefreshTokenBalance={handleRefreshTokenBalance} onItheumAccount={setItheumAccount} />}/>
+                  <Route path="identity" element={<Outlet />}>
+                    <Route path="identitycontainer" element={<IdentityContainer key={rfKeys.identityContainer} onRfMount={() => handleRfMount('identityContainer')} onRefreshTokenBalance={handleRefreshTokenBalance} />} />
+                  </Route>
                   <Route path="selldata" element={<SellData key={rfKeys.sellData} onRfMount={() => handleRfMount('sellData')} itheumAccount={itheumAccount} />} />
                   <Route path="datapacks" element={<Outlet />}>
                     <Route path="buydata" element={<BuyData key={rfKeys.buyData} onRfMount={() => handleRfMount('buyData')} onRefreshTokenBalance={handleRefreshTokenBalance} />} />
