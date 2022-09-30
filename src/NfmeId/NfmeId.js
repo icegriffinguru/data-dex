@@ -3,7 +3,7 @@ import { Box, Stack } from '@chakra-ui/layout';
 import {
   Button, Link, Badge, Flex, Image, StackDivider,  
   HStack, Heading, Center, UnorderedList, ListItem, VStack,
-  Spinner,
+  Spinner, Wrap, WrapItem,
 } from '@chakra-ui/react';
 import dataStreamIcon from 'img/data-stream-icon.png';
 import { ABIS } from 'EVM/ABIs';
@@ -12,6 +12,7 @@ import { useUser } from 'store/UserContext';
 import { useChainMeta } from 'store/ChainMetaContext';
 import { useNavigate } from 'react-router-dom';
 import ChainSupportedComponent from 'UtilComps/ChainSupportedComponent';
+import imgMyNfme from 'img/my-nfme.png';
 
 export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
   const navigate = useNavigate();
@@ -94,10 +95,7 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
   }, [user, isWeb3Enabled, _chainMeta]);
 
   return (
-    <VStack
-      spacing={5}
-      align='stretch'
-      >
+    <>
       {identityContainerState === 0 && (
         <ChainSupportedComponent>
           <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
@@ -125,26 +123,49 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
           </Box>
         </ChainSupportedComponent>
       )}
-      {identityContainerState === 3 && (<>
-              <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
-                <Heading size="lg">My NFMe ID</Heading>
-                <Box fontSize="sm" mt="9" align="left" flex="1">Required Claims</Box>
-                <Box fontSize="sm" mt="9" align="left" flex="1">- NFMe ID Mint Allowed</Box>
-                <Button mt="12" colorScheme="teal" variant="outline" onClick={() => {}}>Launch Avatar Minter</Button>
-              </Box>
-              <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
-                <Heading size="lg">Greenroom Protocal</Heading>
-                <Button mt="12" colorScheme="teal" variant="outline" onClick={() => {}}>Teleport</Button>
-              </Box>
-              <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
-                <Heading size="lg">Web3 Reputation</Heading>
-                <Button mt="12" colorScheme="teal" variant="outline" onClick={() => {}}>Manage Claims</Button>
-              </Box>
-              <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
-                <Heading size="lg">Recovery Wallets</Heading>
-                <Button mt="12" colorScheme="teal" variant="outline" onClick={() => {}}>Manage Wallets</Button>
-              </Box>
-          </>)}
-    </VStack>
+      {identityContainerState === 3 && (<Stack>
+
+          <HStack>
+            <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
+              <Heading size="lg">My NFMe ID</Heading>
+              <HStack>
+                <VStack
+                  spacing={5}
+                  align='stretch'
+                  maxW="md"
+                  >
+                  <Image height="auto" src={imgMyNfme} alt="Itheum Data DEX" />
+                </VStack>
+                <VStack
+                  spacing={5}
+                  align='stretch'
+                  maxW="md"
+                  height="auto"
+                  >
+                    <Box fontSize="sm" mt="9" align="left" flex="1">
+                      Required Claims<br/>
+                      - NFMe ID Mint Allowed
+                    </Box>
+                    <Button mt="12" colorScheme="teal" variant="outline" onClick={() => {}}>Launch Avatar Minter</Button>
+                  </VStack>
+              </HStack>
+            </Box>
+
+            <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
+              <Heading size="lg">Greenroom Protocal</Heading>
+              <Button mt="12" colorScheme="teal" variant="outline" onClick={() => {}}>Teleport</Button>
+            </Box>
+          </HStack>
+
+            <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
+              <Heading size="lg">Web3 Reputation</Heading>
+              <Button mt="12" colorScheme="teal" variant="outline" onClick={() => {}}>Manage Claims</Button>
+            </Box>
+            <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
+              <Heading size="lg">Recovery Wallets</Heading>
+              <Button mt="12" colorScheme="teal" variant="outline" onClick={() => {}}>Manage Wallets</Button>
+            </Box>
+      </Stack>)}
+    </>
   );
 };
