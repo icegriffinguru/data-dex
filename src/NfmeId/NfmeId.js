@@ -5,6 +5,7 @@ import {
   HStack, Heading, Center, UnorderedList, ListItem, VStack,
   Spinner, Wrap, WrapItem, Text,
   TableContainer, Table, Tbody, Tr, Td,
+  Tag, TagLabel,
 } from '@chakra-ui/react';
 import dataStreamIcon from 'img/data-stream-icon.png';
 import { ABIS } from 'EVM/ABIs';
@@ -28,9 +29,12 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
 
   const [identityContainerState, setIdentityContainerState] = useState(0); // 0 for not deployed, 1 for deploying, 2 for deployed, 3 for show my NFMe IDs
   const [identityAddresses, setIdentityAddresses] = useState([]);
+  const [identityOwners, setIdentityOwners] = useState([]);
+  const [claims, setClaims] = useState([]);
   
   let web3Signer = useRef();
   let identityFactory = useRef();
+  let identity = useRef();
   
   console.log('identityContainerState', identityContainerState);
   console.log('identityAddresses', identityAddresses);
@@ -41,10 +45,10 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
 
     // query-start block number
     // We can only query last 1000 blocks due to the limit of Mumbai Testnet
-    const fromBlockNumber = (await web3Provider.getBlockNumber()) - 1;
+    const fromBlockNumber = (await web3Provider.getBlockNumber()) - 1000;
     console.log('fromBlockNumber', fromBlockNumber);
 
-    let events = await identityFactory.current.queryFilter('IdentityDeployed', fromBlockNumber - 1000);
+    let events = await identityFactory.current.queryFilter('IdentityDeployed', fromBlockNumber);
     console.log('events', events);
     const identityDeployedEvents = events.filter(event => event.args[1].toLowerCase() === walletAddress.toLowerCase());
     let identityAddresses = identityDeployedEvents.length > 0 ? identityDeployedEvents.map(event => event.args[0]) : [];
@@ -65,6 +69,53 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
     }
 
     setIdentityAddresses(identityAddresses);
+
+    if (identityAddresses.length === 0) {
+      return;
+    }
+    const identityAddress = identityAddresses[0];
+
+    // query owners of identity contract
+    identity.current = new ethers.Contract(identityAddress, ABIS.identity, web3Signer.current);
+
+    const owners = [await identity.current.owner()];
+    const additionalOwnerAddedEvents = await identity.current.queryFilter('AdditionalOwnerAdded', fromBlockNumber);
+    const additionalOwnerRemovedEvents = await identity.current.queryFilter('AdditionalOwnerRemoved', fromBlockNumber);
+    owners.push(...additionalOwnerAddedEvents.map(ele => ele.args[1]));
+
+    additionalOwnerRemovedEvents
+      .map(ele => ele.args[1])
+      .forEach(ele => {
+        const index = owners.findIndex(eleToFind => eleToFind === ele);
+        if (index >= 0) owners.splice(index, 1);
+    });
+    setIdentityOwners(owners);
+
+    // const confirmations = [];
+
+    // for (const owner of owners) {
+    //   const count = await identity.current.removeAdditionalOwnerConfirmationCount(owner);
+    //   confirmations.push(count);
+    // }
+
+    // setConfirmationState(confirmations);
+
+    const claims = [];
+    const claimAddedEvents = await identity.current.queryFilter('ClaimAdded', fromBlockNumber);
+    const claimRemovedEvents = await identity.current.queryFilter('ClaimRemoved', fromBlockNumber);
+    claims.push(...claimAddedEvents.map(ele => ele.args[0]));
+
+    claimRemovedEvents
+      .map(ele => ele.args[0])
+      .forEach(ele => {
+        const index = claims.findIndex(eleToFind => eleToFind === ele);
+        if (index >= 0) claims.splice(index, 1);
+      });
+
+    setClaims(claims);
+
+    console.log('owners', owners);
+    console.log('claims', claims);
   };
 
   useEffect(() => {
@@ -143,7 +194,7 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
       {identityContainerState === 3 && (<Stack>
 
           <HStack>
-            <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
+            <Box maxW="md" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
               <Heading size="lg">My NFMe ID</Heading>
               <HStack mt="12">
                 <VStack
@@ -173,7 +224,7 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
               </HStack>
             </Box>
 
-            <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
+            <Box maxW="md" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
               <Heading size="lg">Greenroom Protocal</Heading>
               <Button mt="12" colorScheme="teal" variant="outline" onClick={() => {}}>Teleport</Button>
             </Box>
@@ -185,7 +236,17 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
               <Heading size="md">My Claims</Heading>
               <Text fontSize="md" mt="9">Claims are issued by 3rd parties. They can be independently verified. They are NOT NFTs and can be revoked and can have expiry. The more reputation the 3rd party who has the more valuable a claim. An example of a claim can be a “Diver’s License” issues by the Department of Motor Vehicles or “Gamer Passport Alpha” participant claim issues by the Itheum Protocol</Text>
               <Wrap mt="9">
-                <WrapItem maxW="sm" borderWidth="1px" borderRadius="lg">
+                {claims.length === 0 && (
+                  <Tag size='lg' colorScheme='red' borderRadius='full'>
+                    <TagLabel>You don't have any claims.</TagLabel>
+                  </Tag>
+                )}
+                {claims.length > 0 && claims.map((val, index) => (
+                  <WrapItem maxW="sm" borderWidth="1px" borderRadius="lg">
+                    <Image height="120" src={imgLogo} alt="NFMe" />
+                  </WrapItem>
+                ))}
+                {/* <WrapItem maxW="sm" borderWidth="1px" borderRadius="lg">
                   <Image height="120" src={imgLogo} alt="NFMe" />
                 </WrapItem>
                 <WrapItem maxW="sm" borderWidth="1px" borderRadius="lg">
@@ -193,7 +254,7 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
                 </WrapItem>
                 <WrapItem maxW="sm" borderWidth="1px" borderRadius="lg">
                   <Image height="120" src={imgLogo} alt="NFMe" />
-                </WrapItem>
+                </WrapItem> */}
               </Wrap>
               <Button mt="9" colorScheme="teal" variant="outline" onClick={() => {}}>Manage Claims</Button>
             </Box>
@@ -220,26 +281,12 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
             <TableContainer td="9">
               <Table variant="unstyled">
                 <Tbody>
-                  <Tr>
-                    <Td>Wallet 1:</Td>
-                    <Td>0xasjsd2kk2321k3123jasd11</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Wallet 2:</Td>
-                    <Td></Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Wallet 3:</Td>
-                    <Td></Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Wallet 4:</Td>
-                    <Td></Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Wallet 5:</Td>
-                    <Td></Td>
-                  </Tr>
+                  {[1,2,3,4,5].map((i, index) => (
+                    <Tr>
+                      <Td>Wallet {`${i}`}:</Td>
+                      <Td>{identityOwners.length > i - 1 && identityOwners[i - 1]}</Td>
+                    </Tr>
+                  ))}
                 </Tbody>
               </Table>
             </TableContainer>
