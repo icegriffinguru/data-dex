@@ -89,33 +89,26 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
       spacing={5}
       align='stretch'
       >
-      {/* <Flex align="top" spacing={10}> */}
-        <ChainSupportedComponent feature="Identity Container">
-          <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
-              <Heading size="lg">My Identity Contracts</Heading>
-
-              <Box fontSize="sm" mt="9" align="left" flex="1">
-                {identityAddresses.length === 0 ? (<>You do not have any Identity Contract.</>) : (
-                  <UnorderedList>
-                    {identityAddresses.map((val, index) => (<ListItem key={`my-indentity-address-${index}`}>{val}</ListItem>))}
-                  </UnorderedList>
-                )}
-              </Box>
-          </Box>
-          
-        </ChainSupportedComponent>
-
-
-        <ChainSupportedComponent>
-          <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
+      <ChainSupportedComponent>
+        <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
+          {identityAddresses.length === 0 ? (<>
             <Heading size="lg">Step 1: Deploy your Identity Contract</Heading>
 
             <Box fontSize="sm" mt="9" align="left" flex="1">Your first step is to deploy what we can an identity, this is a smart contract that can be used by you to store your web3 “reputation” and to hold your NFMe ID Souldbound token. You have FULL control over this identity contract and you can choose to use it to “talk” with blockchain based DApps to expose your reputation or other data your have within the Itheum ecosystem. The DApps can then provide you personalized experiences. Think - gated features or immediate whitelists</Box>
 
             <Button mt="12" colorScheme="teal" variant="outline" onClick={deployIdentity}>Deploy Identity Contract</Button>
-          </Box>
-        </ChainSupportedComponent>
-      {/* </Flex> */}
+          </>) : (
+            <>
+              <Heading size="lg">My Identity Contracts</Heading>
+
+              <UnorderedList>
+                {identityAddresses.map((val, index) => (<ListItem key={`my-indentity-address-${index}`}>{val}</ListItem>))}
+              </UnorderedList>
+            </>
+          )}
+          
+        </Box>
+      </ChainSupportedComponent>
     </VStack>
   );
 };

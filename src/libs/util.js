@@ -241,7 +241,7 @@ export const MENU = {
   DATAPROOFS: 13,
   TRUSTEDCOMP:14,
   FAUCET: 14,
-  CLAIMS: 15,
+  NFMEID: 15,
 };
 
 export const PATHS = {
@@ -260,7 +260,7 @@ export const PATHS = {
   datacoalitions: [12,[2]],
   personaldataproof: [13,[0]],
   trustedcomputation:[14,[4]],
-  identitycontainer: [15,[0]],
+  nfmeid: [15,[-1]],
 };
 
 export const CHAINS = {
