@@ -3,7 +3,8 @@ import { Box, Stack } from '@chakra-ui/layout';
 import {
   Button, Link, Badge, Flex, Image, StackDivider,  
   HStack, Heading, Center, UnorderedList, ListItem, VStack,
-  Spinner, Wrap, WrapItem,
+  Spinner, Wrap, WrapItem, Text,
+  TableContainer, Table, Tbody, Tr, Td,
 } from '@chakra-ui/react';
 import dataStreamIcon from 'img/data-stream-icon.png';
 import { ABIS } from 'EVM/ABIs';
@@ -12,7 +13,8 @@ import { useUser } from 'store/UserContext';
 import { useChainMeta } from 'store/ChainMetaContext';
 import { useNavigate } from 'react-router-dom';
 import ChainSupportedComponent from 'UtilComps/ChainSupportedComponent';
-import imgMyNfme from 'img/my-nfme.png';
+import imgNfmeId from 'img/nfme-id.png';
+import imgLogo from 'img/logo.png';
 import { sleep } from 'libs/util';
 
 export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
@@ -143,24 +145,29 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
           <HStack>
             <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
               <Heading size="lg">My NFMe ID</Heading>
-              <HStack>
+              <HStack mt="12">
                 <VStack
                   spacing={5}
                   align='stretch'
                   maxW="md"
+                  h="420"
                   >
-                  <Image height="auto" src={imgMyNfme} alt="Itheum Data DEX" />
+                  <Image height="100%" src={imgNfmeId} alt="Itheum Data DEX" />
                 </VStack>
                 <VStack
                   spacing={5}
                   align='stretch'
                   maxW="md"
-                  height="auto"
+                  h="420"
+                  pl="6"
                   >
-                    <Box fontSize="sm" mt="9" align="left" flex="1">
-                      Required Claims<br/>
-                      - NFMe ID Mint Allowed
+                    <Box h="100%">
+                    <Heading as='h5' size='md'>Required Claims</Heading>
+                    <Text fontSize='lg'>- NFMe ID Mint Allowed</Text>
                     </Box>
+                    {/* <UnorderedList>
+                      <ListItem><Text fontSize='lg'>NFMe ID Mint Allowed</Text></ListItem>
+                    </UnorderedList> */}
                     <Button mt="12" colorScheme="teal" variant="outline" onClick={() => {}}>Launch Avatar Minter</Button>
                   </VStack>
               </HStack>
@@ -172,14 +179,73 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
             </Box>
           </HStack>
 
-            <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
-              <Heading size="lg">Web3 Reputation</Heading>
-              <Button mt="12" colorScheme="teal" variant="outline" onClick={() => {}}>Manage Claims</Button>
+          <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
+            <Heading size="lg">Web3 Reputation</Heading>
+            <Box maxW="sm" maxWidth="initial" mt="12">
+              <Heading size="md">My Claims</Heading>
+              <Text fontSize="md" mt="9">Claims are issued by 3rd parties. They can be independently verified. They are NOT NFTs and can be revoked and can have expiry. The more reputation the 3rd party who has the more valuable a claim. An example of a claim can be a “Diver’s License” issues by the Department of Motor Vehicles or “Gamer Passport Alpha” participant claim issues by the Itheum Protocol</Text>
+              <Wrap mt="9">
+                <WrapItem maxW="sm" borderWidth="1px" borderRadius="lg">
+                  <Image height="120" src={imgLogo} alt="NFMe" />
+                </WrapItem>
+                <WrapItem maxW="sm" borderWidth="1px" borderRadius="lg">
+                  <Image height="120" src={imgLogo} alt="NFMe" />
+                </WrapItem>
+                <WrapItem maxW="sm" borderWidth="1px" borderRadius="lg">
+                  <Image height="120" src={imgLogo} alt="NFMe" />
+                </WrapItem>
+              </Wrap>
+              <Button mt="9" colorScheme="teal" variant="outline" onClick={() => {}}>Manage Claims</Button>
             </Box>
-            <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
-              <Heading size="lg">Recovery Wallets</Heading>
-              <Button mt="12" colorScheme="teal" variant="outline" onClick={() => {}}>Manage Wallets</Button>
+            <Box maxW="sm" maxWidth="initial"  mt="12">
+              <Heading size="md">My Badges</Heading>
+              <Text fontSize="md" mt="9">Badges are more like “achievements” and are NFTs. POAPs, OATs etc are badges that you can send to your identity and build your achievement portfolio</Text>
+              <Wrap mt="9">
+                <WrapItem maxW="sm" borderWidth="1px" borderRadius="lg">
+                  <Image height="120" src={imgLogo} alt="NFMe" />
+                </WrapItem>
+                <WrapItem maxW="sm" borderWidth="1px" borderRadius="lg">
+                  <Image height="120" src={imgLogo} alt="NFMe" />
+                </WrapItem>
+                <WrapItem maxW="sm" borderWidth="1px" borderRadius="lg">
+                  <Image height="120" src={imgLogo} alt="NFMe" />
+                </WrapItem>
+              </Wrap>
+              <Button mt="9" colorScheme="teal" variant="outline" onClick={() => {}}>How to Get</Button>
             </Box>
+          </Box>
+          <Box maxW="sm" borderWidth="1px" p="10" borderRadius="lg" maxWidth="initial">
+            <Heading size="lg">Recovery Wallets</Heading>
+
+            <TableContainer td="9">
+              <Table variant="unstyled">
+                <Tbody>
+                  <Tr>
+                    <Td>Wallet 1:</Td>
+                    <Td>0xasjsd2kk2321k3123jasd11</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Wallet 2:</Td>
+                    <Td></Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Wallet 3:</Td>
+                    <Td></Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Wallet 4:</Td>
+                    <Td></Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Wallet 5:</Td>
+                    <Td></Td>
+                  </Tr>
+                </Tbody>
+              </Table>
+            </TableContainer>
+
+            <Button mt="9" colorScheme="teal" variant="outline" onClick={() => {}}>Manage Wallets</Button>
+          </Box>
       </Stack>)}
     </>
   );
