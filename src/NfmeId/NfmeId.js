@@ -13,6 +13,7 @@ import { useChainMeta } from 'store/ChainMetaContext';
 import { useNavigate } from 'react-router-dom';
 import ChainSupportedComponent from 'UtilComps/ChainSupportedComponent';
 import imgMyNfme from 'img/my-nfme.png';
+import { sleep } from 'libs/util';
 
 export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
   const navigate = useNavigate();
@@ -23,21 +24,26 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
   const { error: errCfTestData, isLoading: loadingCfTestData, fetch: doCfTestData, data: dataCfTestData } = useMoralisCloudFunction('loadTestData', {}, { autoFetch: false });
   const walletAddress = user.get('ethAddress');
 
-  const [identityContainerState, setIdentityContainerState] = useState(3); // 0 for not deployed, 1 for deploying, 2 for deployed, 3 for show my NFMe IDs
+  const [identityContainerState, setIdentityContainerState] = useState(0); // 0 for not deployed, 1 for deploying, 2 for deployed, 3 for show my NFMe IDs
   const [identityAddresses, setIdentityAddresses] = useState([]);
   
   let web3Signer = useRef();
   let identityFactory = useRef();
   
+  console.log('identityContainerState', identityContainerState);
+  console.log('identityAddresses', identityAddresses);
   const init = async () => {
+    console.log('init');
     web3Signer.current = web3Provider.getSigner();
     identityFactory.current = new ethers.Contract(_chainMeta.contracts.identityFactory, ABIS.ifactory, web3Signer.current);
 
     // query-start block number
     // We can only query last 1000 blocks due to the limit of Mumbai Testnet
-    const fromBlockNumber = (await web3Provider.getBlockNumber()) - 998;
+    const fromBlockNumber = (await web3Provider.getBlockNumber()) - 1;
+    console.log('fromBlockNumber', fromBlockNumber);
 
-    let events = await identityFactory.current.queryFilter('IdentityDeployed', fromBlockNumber);
+    let events = await identityFactory.current.queryFilter('IdentityDeployed', fromBlockNumber - 1000);
+    console.log('events', events);
     const identityDeployedEvents = events.filter(event => event.args[1].toLowerCase() === walletAddress.toLowerCase());
     let identityAddresses = identityDeployedEvents.length > 0 ? identityDeployedEvents.map(event => event.args[0]) : [];
 
@@ -59,17 +65,24 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
     setIdentityAddresses(identityAddresses);
   };
 
-  // useEffect(() => {
-  //   if (identityAddresses.length === 0) {
-  //     setIdentityContainerState(0);
-  //   } else {
-  //     if (identityContainerState === 1) { // if previous state is deploying, go to state 2 - show succesfully deployed
-  //       setIdentityContainerState(2);
-  //     } else { // show NFMe IDs
-  //       setIdentityContainerState(3);
-  //     }
-  //   }
-  // }, [identityAddresses]);
+  useEffect(() => {
+    (async () => {
+      console.log('identityAddresses, identityContainerState', identityAddresses, identityContainerState);
+      if (identityAddresses.length === 0) {
+        setIdentityContainerState(0);
+      } else {
+        if (identityContainerState === 1) { // if previous state is deploying, go to state 2 - show succesfully deployed
+          setIdentityContainerState(2);
+          console.log('sleep start');
+          await sleep(3); // sleep 3 seconds and go to state 3
+          console.log('sleep end');
+          setIdentityContainerState(3);
+        } else { // show NFMe IDs
+          setIdentityContainerState(3);
+        }
+      }
+    })();
+  }, [identityAddresses]);
 
   const deployIdentity = async () => {
     try {
@@ -79,6 +92,7 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
       setIdentityContainerState(1);
 
       const txReceipt = await deployIdentityTx.wait();
+      console.log('txReceipt', txReceipt);
       // load deployed identities
       await init();
     } catch (e) {
@@ -89,6 +103,7 @@ export default function({ onRfMount, setMenuItem, onRefreshTokenBalance }) {
   useEffect(() => {
     // this will trigger during component load/page load, so let's get the latest claims balances
     // ... we need to listed to _chainMeta event as well as it may get set after moralis responds
+    console.log('_chainMeta user isWeb3Enabled', _chainMeta, user, isWeb3Enabled);
     if (_chainMeta?.networkId && user && isWeb3Enabled) {
       init();
     }
